@@ -2,116 +2,111 @@
 
 ## Overview
 
-This project is a Model Context Protocol (MCP) server for coding-related tools, providing a robust backend for various coding utilities and filesystem operations.
+Coding Tools is a Model Context Protocol (MCP) server designed to provide a robust backend for filesystem and code manipulation utilities. This TypeScript-based project offers a modular infrastructure for performing various coding-related operations.
 
 ## Features
 
-- Filesystem-based server infrastructure
-- Utilities for code manipulation and analysis
-- TypeScript-based implementation
-- Modular architecture with separate modules for configuration, server, tools, and utilities
+- 🗂️ Filesystem-based server infrastructure
+- 🛠️ Comprehensive code manipulation and analysis tools
+- 📦 Modular architecture with separate modules for:
+  - Configuration management
+  - Server implementations
+  - Coding utilities
+  - Helper functions
+
+## Technology Stack
+
+- **Language**: TypeScript
+- **Runtime**: Node.js (v18+)
+- **Key Dependencies**:
+  - Model Context Protocol SDK
+  - Zod JSON Schema conversion
 
 ## Prerequisites
 
-- Node.js (version 18 or later recommended)
+- Node.js (version 18 or later)
 - npm (Node Package Manager)
 
 ## Installation
 
-Clone the repository and install dependencies:
+1. Clone the repository:
 
-```bash
-git clone <repository-url>
-cd coding-tools
-npm install
-```
+   ```bash
+   git clone <repository-url>
+   cd coding-tools
+   ```
 
-## Development
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-### Building the Project
+## Development Scripts
 
-To build the project:
+- Build the project:
 
-```bash
-npm run build
-```
+  ```bash
+  npm run build
+  ```
 
-This will compile TypeScript files to JavaScript in the `dist` directory.
+- Watch mode (auto-recompile):
 
-### Watch Mode
+  ```bash
+  npm run watch
+  ```
 
-For development with automatic recompilation:
+- Code Formatting:
 
-```bash
-npm run watch
-```
+  ```bash
+  npm run format           # Format all files
+  npm run format:check     # Check formatting without changes
+  ```
 
-### Code Formatting
-
-This project uses Prettier for code formatting. To format all files:
-
-```bash
-npm run format
-```
-
-To check if files are properly formatted without changing them:
-
-```bash
-npm run format:check
-```
-
-### Linting
-
-ESLint is configured to work with Prettier. To lint the codebase:
-
-```bash
-npm run lint
-```
-
-To automatically fix linting issues:
-
-```bash
-npm run lint:fix
-```
+- Linting:
+  ```bash
+  npm run lint             # Lint the codebase
+  npm run lint:fix         # Automatically fix linting issues
+  ```
 
 ## Project Structure
 
-- `src/`
-  - `config/`: Configuration management
-  - `server/`: Server-related implementations
-  - `tools/`: Specific coding tools and utilities
-  - `utils/`: Utility functions and helpers
-- `dist/`: Compiled JavaScript files
-- `index.ts`: Main entry point
-
-## Dependencies
-
-Key dependencies include:
-- `@modelcontextprotocol/sdk`: Core MCP functionality
-- `diff`: Diff utility for code comparisons
-- `glob`: File path matching
-- `minimatch`: Filename matching
-- `zod-to-json-schema`: Schema conversion utilities
+```
+coding-tools/
+│
+├── src/
+│   ├── config/        # Configuration management
+│   ├── server/        # Server-related implementations
+│   ├── tools/         # Coding utilities
+│   └── utils/         # Utility functions
+│
+├── dist/              # Compiled JavaScript files
+└── index.ts           # Main entry point
+```
 
 ## CLI Usage
 
-After installation, you can use the CLI tool:
+After installation, run the server:
 
 ```bash
 node dist/index.js <allow-folder>
 ```
 
-## Licensing
+## Dependencies
 
-This project is licensed under the MIT License.
+- `@modelcontextprotocol/sdk`: Core MCP functionality
+- `zod-to-json-schema`: Schema conversion tools
 
 ## Contributing
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
+
+## License
+
+Distributed under the MIT License.
 
 ## Contact
 

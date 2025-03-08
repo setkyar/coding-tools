@@ -3,6 +3,11 @@ import { ToolDefinition } from './types.js';
 import { AppConfig } from '../config/AppConfig.js';
 import { registerFilesystemTools } from './filesystem/index.js';
 import { registerGrepTools } from './grep/index.js';
+import { registerTouchTools } from './touch/index.js';
+import { registerSedTools } from './sed/index.js';
+import { registerAwkTools } from './awk/index.js';
+import { registerShellTools } from './shell/index.js';
+import { registerCatTools } from './cat/index.js';
 
 /**
  * Registry for all available tools
@@ -23,6 +28,11 @@ export class ToolRegistry {
       // Filesystem tools
       ...registerFilesystemTools(config),
       ...registerGrepTools(config),
+      ...registerTouchTools(config),
+      ...registerSedTools(config),
+      ...registerAwkTools(config),
+      ...registerShellTools(config),
+      ...registerCatTools(config),
     ];
   }
 
