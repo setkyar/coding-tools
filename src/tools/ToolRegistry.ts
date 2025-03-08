@@ -2,7 +2,7 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
 import { ToolDefinition } from './types.js';
 import { AppConfig } from '../config/AppConfig.js';
 import { registerFilesystemTools } from './filesystem/index.js';
-
+import { registerGrepTools } from './grep/index.js';
 
 /**
  * Registry for all available tools
@@ -22,9 +22,7 @@ export class ToolRegistry {
     return [
       // Filesystem tools
       ...registerFilesystemTools(config),
-      
-      // Future tool categories can be added here in the same way
-      // ...registerGrepTools(config),
+      ...registerGrepTools(config),
     ];
   }
 
@@ -47,7 +45,7 @@ export class ToolRegistry {
     if (!tool) {
       throw new Error(`Unknown tool: ${name}`);
     }
-    
+
     return await tool.handler(params);
   }
 }
