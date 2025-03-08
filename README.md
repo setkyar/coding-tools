@@ -8,6 +8,7 @@ Coding Tools is a Model Context Protocol (MCP) server designed to provide a robu
 
 - 🗂️ Filesystem-based server infrastructure
 - 🛠️ Comprehensive code manipulation and analysis tools
+- 🔄 Git version control integration
 - 📦 Modular architecture with separate modules for:
   - Configuration management
   - Server implementations

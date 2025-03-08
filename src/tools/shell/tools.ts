@@ -41,6 +41,8 @@ export class ShellTools {
       />(\/dev\/tcp|\/dev\/udp)/i, // Network redirections
       /curl\s+.*\|\s*(bash|sh|zsh)/i, // Piping downloads to shell
       /wget\s+.*\|\s*(bash|sh|zsh)/i, // Piping downloads to shell
+      /git\s+push\s+.*--force/i, // Force push prevention
+      /git\s+clean\s+-[fd]/i, // Dangerous cleaning operation
     ];
 
     if (disallowedPatterns.some(pattern => pattern.test(command))) {
@@ -66,6 +68,7 @@ export class ShellTools {
       'chmod',
       'pwd',
       'cd',
+      'git',
     ];
 
     // Extract the main command (first word before space or special chars)

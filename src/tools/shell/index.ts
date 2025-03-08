@@ -12,7 +12,7 @@ export function registerShellTools(config: AppConfig): ToolDefinition[] {
     {
       name: 'shell',
       description:
-        'Executes shell commands in a controlled environment with safety restrictions. This powerful tool allows you to run arbitrary shell commands and capture their output. Use this when you need to perform operations not covered by other specialized tools, such as running system utilities, executing scripts, or performing complex operations that combine multiple commands. The tool provides options to specify the working directory, set a timeout to prevent long-running commands, and provide custom environment variables. Exercise caution when using this tool as it has broader access to the system.',
+        'Executes shell commands in a controlled environment with safety restrictions. This powerful tool allows you to run arbitrary shell commands and capture their output. Supports git version control operations along with standard commands. Use this when you need to perform operations not covered by other specialized tools, such as running system utilities, executing scripts, git repository management, or performing complex operations that combine multiple commands. The tool provides options to specify the working directory, set a timeout to prevent long-running commands, and provide custom environment variables. Exercise caution when using this tool as it has broader access to the system.',
       schema: z.object({
         command: z.string().describe('The shell command to execute'),
         workingDir: z
