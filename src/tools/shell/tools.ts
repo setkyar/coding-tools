@@ -50,6 +50,47 @@ export class ShellTools {
       };
     }
 
+    // List of allowed commands (prefixes)
+    const allowedCommands = [
+      'npm',
+      'node',
+      'ls',
+      'cat',
+      'echo',
+      'grep',
+      'find',
+      'mkdir',
+      'cp',
+      'mv',
+      'touch',
+      'chmod',
+      'pwd',
+      'cd',
+    ];
+
+    // Extract the main command (first word before space or special chars)
+    const mainCommand = command.trim().split(/\s+/)[0];
+
+    // Check if the command is in the allowed list
+    const isCommandAllowed = allowedCommands.some(
+      cmd =>
+        mainCommand === cmd ||
+        mainCommand.startsWith(`${cmd} `) ||
+        mainCommand.startsWith(`${cmd}/`)
+    );
+
+    if (!isCommandAllowed) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: `Error: Command '${mainCommand}' is not in the allowed list. Allowed commands are: ${allowedCommands.join(', ')}`,
+          },
+        ],
+        isError: true,
+      };
+    }
+
     // Check if the working directory is allowed
     if (!this.config.isPathAllowed(workingDir)) {
       return {
@@ -68,7 +109,7 @@ export class ShellTools {
       const processEnv = {
         ...process.env,
         ...env,
-        // Restrict certain environment variables for security
+        // Ensure PATH includes npm and node
         PATH: process.env.PATH,
       };
 

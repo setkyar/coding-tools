@@ -12,7 +12,8 @@ export function registerCatTools(config: AppConfig): ToolDefinition[] {
   return [
     {
       name: 'cat',
-      description: 'Concatenate and display file contents',
+      description:
+        'Concatenates and displays file contents with formatting options. Similar to the Unix cat command, this tool allows you to view the contents of a file with additional display features. Use this when you need to examine file contents with precise control, such as viewing specific line ranges, displaying line numbers for reference, or handling different file encodings. Unlike the read_file tool, cat provides enhanced formatting options that make it easier to navigate and understand file content, especially for code review or debugging.',
       schema: z.object({
         filePath: z.string().describe('The path to the file to read'),
         showLineNumbers: z
