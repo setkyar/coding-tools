@@ -17,7 +17,6 @@ export function registerShellTools(config: AppConfig): ToolDefinition[] {
         command: z.string().describe('The shell command to execute'),
         workingDir: z
           .string()
-          .optional()
           .describe('Working directory for command execution (default: current directory)'),
         timeout: z.number().optional().describe('Command timeout in milliseconds (default: 30000)'),
         env: z

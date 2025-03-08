@@ -47,10 +47,10 @@ export class MCPServer {
     // Call tool handler
     this.server.setRequestHandler(CallToolRequestSchema, async request => {
       try {
-        const { name, arguments: args } = request.params;
+        let { name, arguments: args } = request.params;
 
-        if (!args) {
-          throw new Error('No parameters provided for tool call');
+        if (!args || args === undefined) {
+          args = {};
         }
 
         return await this.toolRegistry.callTool(name, args);
