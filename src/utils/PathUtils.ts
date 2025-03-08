@@ -1,5 +1,5 @@
-import path from "path";
-import os from "os";
+import path from 'path';
+import os from 'os';
 
 export class PathUtils {
   /**
@@ -13,7 +13,7 @@ export class PathUtils {
    * Expand home directory references (e.g., ~/) in a path
    */
   static expandHome(filepath: string): string {
-    if (filepath.startsWith("~/") || filepath === "~") {
+    if (filepath.startsWith('~/') || filepath === '~') {
       return path.join(os.homedir(), filepath.slice(1));
     }
     return filepath;
@@ -24,7 +24,7 @@ export class PathUtils {
    */
   static sanitize(userPath: string): string {
     // Remove any null bytes (potential security issue)
-    let sanitized = userPath.replace(/\0/g, "");
+    let sanitized = userPath.replace(/\0/g, '');
 
     // Resolve to absolute path
     sanitized = path.resolve(sanitized);

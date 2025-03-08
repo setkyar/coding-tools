@@ -1,0 +1,19 @@
+# Build output
+dist
+build
+
+# Dependencies
+node_modules
+
+# Package files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Git files
+.git
+.gitignore
+
+# Other files to ignore
+.DS_Store
+coverage

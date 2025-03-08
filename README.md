@@ -46,6 +46,34 @@ For development with automatic recompilation:
 npm run watch
 ```
 
+### Code Formatting
+
+This project uses Prettier for code formatting. To format all files:
+
+```bash
+npm run format
+```
+
+To check if files are properly formatted without changing them:
+
+```bash
+npm run format:check
+```
+
+### Linting
+
+ESLint is configured to work with Prettier. To lint the codebase:
+
+```bash
+npm run lint
+```
+
+To automatically fix linting issues:
+
+```bash
+npm run lint:fix
+```
+
 ## Project Structure
 
 - `src/`

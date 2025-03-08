@@ -1,6 +1,6 @@
-import fs from "fs/promises";
-import path from "path";
-import { PathUtils } from "../utils/PathUtils.js";
+import fs from 'fs/promises';
+import path from 'path';
+import { PathUtils } from '../utils/PathUtils.js';
 
 export class AppConfig {
   allowedDirectories: string[] = [];
@@ -18,14 +18,12 @@ export class AppConfig {
   parseCommandLineArgs(): void {
     const args = process.argv.slice(2);
     if (args.length === 0) {
-      console.error(
-        "Usage: coding-tools <allowed-directory> [additional-directories...]"
-      );
+      console.error('Usage: coding-tools <allowed-directory> [additional-directories...]');
       process.exit(1);
     }
 
     // Store allowed directories in normalized form
-    this.allowedDirectories = args.map((dir) =>
+    this.allowedDirectories = args.map(dir =>
       PathUtils.normalize(path.resolve(PathUtils.expandHome(dir)))
     );
   }
@@ -35,7 +33,7 @@ export class AppConfig {
    */
   async validateDirectories(): Promise<void> {
     await Promise.all(
-      process.argv.slice(2).map(async (dir) => {
+      process.argv.slice(2).map(async dir => {
         try {
           const expandedDir = PathUtils.expandHome(dir);
           const stats = await fs.stat(expandedDir);
@@ -56,8 +54,6 @@ export class AppConfig {
    */
   isPathAllowed(filePath: string): boolean {
     const normalizedPath = PathUtils.normalize(path.resolve(filePath));
-    return this.allowedDirectories.some((dir) =>
-      normalizedPath.startsWith(dir)
-    );
+    return this.allowedDirectories.some(dir => normalizedPath.startsWith(dir));
   }
 }
