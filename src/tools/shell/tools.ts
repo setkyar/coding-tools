@@ -3,7 +3,6 @@ import { ToolResponse } from '../types.js';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 
-// Promisify exec for async/await usage
 const execAsync = promisify(exec);
 
 export class ShellTools {
@@ -13,53 +12,50 @@ export class ShellTools {
     this.config = config;
   }
 
-  /**
-   * Shell command execution tool
-   * Executes shell commands in a controlled environment
-   */
   async shell(params: {
     command: string;
     workingDir?: string;
     timeout?: number;
     env?: Record<string, string>;
   }): Promise<ToolResponse> {
-    const {
-      command,
-      workingDir = process.cwd(),
-      timeout = 30000, // Default 30 second timeout
-      env = {},
-    } = params;
+    const { command, workingDir = process.cwd(), timeout = 30000, env = {} } = params;
 
     if (!command || typeof command !== 'string') {
-      throw new Error('Invalid parameters: command must be a string');
+      throw new Error('Invalid command');
     }
 
-    // Security check - reject commands containing harmful patterns
     const disallowedPatterns = [
-      /rm\s+(-r[f]?|--recursive)\s+\//i, // Recursive delete from root
-      /mkfifo/i, // Create named pipes
-      />(\/dev\/tcp|\/dev\/udp)/i, // Network redirections
-      /curl\s+.*\|\s*(bash|sh|zsh)/i, // Piping downloads to shell
-      /wget\s+.*\|\s*(bash|sh|zsh)/i, // Piping downloads to shell
-      /git\s+push\s+.*--force/i, // Force push prevention
-      /git\s+clean\s+-[fd]/i, // Dangerous cleaning operation
+      /rm\s+(-r[f]?|--recursive)/i,
+      /mkfifo/i,
+      />(\/dev\/tcp|\/dev\/udp)/i,
+      /curl\s+.*\|\s*(bash|sh|zsh)/i,
+      /wget\s+.*\|\s*(bash|sh|zsh)/i,
+      /;\s*(bash|sh|zsh)/i,
+      /&&\s*(bash|sh|zsh)/i,
+      /\|\s*(bash|sh|zsh)/i,
+      /sudo/i,
+      /kill\s+-9/i,
     ];
 
     if (disallowedPatterns.some(pattern => pattern.test(command))) {
-      return {
-        content: [{ type: 'text', text: 'Error: Potentially harmful command detected' }],
-        isError: true,
-      };
+      return { content: [{ type: 'text', text: 'Harmful command detected' }], isError: true };
     }
 
-    // List of allowed commands (prefixes)
     const allowedCommands = [
-      'npm',
-      'node',
-      'ls',
       'cat',
-      'echo',
+      'less',
+      'head',
+      'tail',
       'grep',
+      'awk',
+      'sed',
+      'sort',
+      'uniq',
+      'cut',
+      'tr',
+      'wc',
+      'diff',
+      'ls',
       'find',
       'mkdir',
       'cp',
@@ -67,93 +63,59 @@ export class ShellTools {
       'touch',
       'chmod',
       'pwd',
-      'cd',
+      'ps',
+      'date',
+      'whoami',
+      'env',
+      'npm',
+      'node',
       'git',
+      'tree',
+      'echo',
     ];
 
-    // Extract the main command (first word before space or special chars)
-    const mainCommand = command.trim().split(/\s+/)[0];
-
-    // Check if the command is in the allowed list
-    const isCommandAllowed = allowedCommands.some(
-      cmd =>
-        mainCommand === cmd ||
-        mainCommand.startsWith(`${cmd} `) ||
-        mainCommand.startsWith(`${cmd}/`)
-    );
-
-    if (!isCommandAllowed) {
+    const commandParts = command.trim().split(/[\s|><&;]+/);
+    const mainCommand = commandParts[0];
+    if (!allowedCommands.includes(mainCommand)) {
       return {
-        content: [
-          {
-            type: 'text',
-            text: `Error: Command '${mainCommand}' is not in the allowed list. Allowed commands are: ${allowedCommands.join(', ')}`,
-          },
-        ],
+        content: [{ type: 'text', text: `Command '${mainCommand}' not allowed` }],
         isError: true,
       };
     }
 
-    // Check if the working directory is allowed
+    const dangerousSubcommands = ['bash', 'sh', 'zsh', 'rm', 'sudo'];
+    if (commandParts.some(part => dangerousSubcommands.includes(part))) {
+      return { content: [{ type: 'text', text: 'Disallowed subcommand detected' }], isError: true };
+    }
+
     if (!this.config.isPathAllowed(workingDir)) {
       return {
-        content: [
-          {
-            type: 'text',
-            text: `Error: Access denied - ${workingDir} is outside allowed directories`,
-          },
-        ],
+        content: [{ type: 'text', text: `Restricted directory: ${workingDir}` }],
         isError: true,
       };
     }
 
     try {
-      // Set up environment variables
-      const processEnv = {
-        ...process.env,
-        ...env,
-        // Ensure PATH includes npm and node
-        PATH: process.env.PATH,
-      };
-
-      // Execute the command
+      const shell = process.platform === 'win32' ? 'cmd.exe' : '/bin/bash';
+      const processEnv = { ...process.env, ...env, PATH: process.env.PATH };
       const { stdout, stderr } = await execAsync(command, {
         cwd: workingDir,
         env: processEnv,
-        timeout: timeout,
-        maxBuffer: 1024 * 1024, // 1MB output buffer
+        timeout,
+        maxBuffer: 1024 * 1024,
+        shell,
       });
 
-      // Build the response
-      const response: ToolResponse = {
-        content: [],
-      };
-
-      if (stdout) {
-        response.content.push({ type: 'text', text: stdout });
-      }
-
-      if (stderr) {
-        response.content.push({
-          type: 'text',
-          text: `Warning: Command produced error output:\n${stderr}`,
-        });
-      }
-
-      if (!stdout && !stderr) {
-        response.content.push({
-          type: 'text',
-          text: 'Command executed successfully with no output',
-        });
-      }
-
-      return response;
-    } catch (error) {
-      console.error(`Error executing shell command: ${JSON.stringify(error)}`);
-      const errorMessage = error instanceof Error ? error.message : JSON.stringify(error);
-
       return {
-        content: [{ type: 'text', text: `Error: ${errorMessage}` }],
+        content: [
+          ...(stdout ? [{ type: 'text', text: stdout }] : []),
+          ...(stderr ? [{ type: 'text', text: `Stderr: ${stderr}` }] : []),
+          ...(!stdout && !stderr ? [{ type: 'text', text: 'No output' }] : []),
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [{ type: 'text', text: `Error: ${String(error)}` }],
         isError: true,
       };
     }
