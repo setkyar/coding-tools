@@ -15,6 +15,48 @@ export class ShellTools {
     this.currentWorkingDir = this.config.allowedDirectories[0]; // Initialize to the first allowed directory
   }
 
+  /**
+   * Change the current working directory
+   */
+  async changeDirectory(targetDir: string): Promise<ToolResponse> {
+    // Resolve the target directory relative to current working directory
+    const resolvedDir = path.resolve(this.currentWorkingDir, targetDir);
+
+    // Check if the resolved path is within allowed directories
+    if (!(await this.config.isPathAllowed(resolvedDir))) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: `Cannot change to directory: ${resolvedDir} is outside allowed directories`,
+          },
+        ],
+        isError: true,
+      };
+    }
+
+    // Update the current working directory
+    this.currentWorkingDir = resolvedDir;
+    return {
+      content: [
+        {
+          type: 'text',
+          text: `Changed directory to ${resolvedDir}`,
+        },
+      ],
+    };
+  }
+
+  /**
+   * Get the current working directory
+   */
+  getCurrentWorkingDir(): string {
+    return this.currentWorkingDir;
+  }
+
+  /**
+   * Execute a shell command
+   */
   async shell(params: {
     command: string;
     workingDir?: string;
@@ -78,7 +120,6 @@ export class ShellTools {
       'git',
       'tree',
       'echo',
-      'cd', // Added 'cd' for directory navigation
     ];
 
     const commandParts = command.trim().split(/[\s|><&;]+/);
@@ -104,27 +145,6 @@ export class ShellTools {
         content: [{ type: 'text', text: `Restricted directory: ${workingDir}` }],
         isError: true,
       };
-    }
-
-    // Special handling for 'cd' command
-    if (mainCommand === 'cd') {
-      const targetDir = commandParts[1] || this.config.allowedDirectories[0]; // Default to first allowed directory
-      const resolvedDir = path.resolve(workingDir, targetDir);
-
-      if (!(await this.config.isPathAllowed(resolvedDir))) {
-        return {
-          content: [
-            {
-              type: 'text',
-              text: `Cannot change to directory: ${resolvedDir} is outside allowed directories`,
-            },
-          ],
-          isError: true,
-        };
-      }
-
-      this.currentWorkingDir = resolvedDir;
-      return { content: [{ type: 'text', text: `Changed directory to ${resolvedDir}` }] };
     }
 
     // Execute the command
