@@ -2,26 +2,26 @@
 
 ## Overview
 
-Coding Tools is a Model Context Protocol (MCP) server designed to provide a robust backend for filesystem and code manipulation utilities. This TypeScript-based project offers a modular infrastructure for performing various coding-related operations.
+Coding Tools is a Model Context Protocol (MCP) server designed to provide a robust backend for filesystem and code manipulation utilities. This TypeScript-based project offers a modular infrastructure for performing various coding-related operations with strong security measures and validation.
 
 ## Features
 
-- 🗂️ Filesystem-based server infrastructure
-- 🛠️ Comprehensive code manipulation and analysis tools
-- 🔄 Git version control integration
-- 📦 Modular architecture with separate modules for:
+- Secure filesystem operations with path validation and sanitization
+- Comprehensive shell command execution with security restrictions
+- Git version control integration
+- Modular architecture with separate components for:
   - Configuration management
   - Server implementations
-  - Coding utilities
-  - Helper functions
+  - Coding utilities and tools
+  - Security and validation utilities
 
 ## Technology Stack
 
 - **Language**: TypeScript
 - **Runtime**: Node.js (v18+)
 - **Key Dependencies**:
-  - Model Context Protocol SDK
-  - Zod JSON Schema conversion
+  - Model Context Protocol SDK (v0.5.0)
+  - Zod for schema validation
 
 ## Prerequisites
 
@@ -76,33 +76,58 @@ coding-tools/
 │
 ├── src/
 │   ├── config/        # Configuration management
+│   │   └── AppConfig.ts  # Handles directory validation and security
+│   │
 │   ├── server/        # Server-related implementations
+│   │   └── MCPServer.ts  # MCP protocol server implementation
+│   │
 │   ├── tools/         # Coding utilities
+│   │   ├── filesystem/  # Filesystem operations
+│   │   ├── shell/       # Shell command execution
+│   │   └── types.ts     # Shared type definitions
+│   │
 │   └── utils/         # Utility functions
+│       └── PathUtils.ts  # Path handling and sanitization
 │
 ├── dist/              # Compiled JavaScript files
 └── index.ts           # Main entry point
 ```
 
+## Security Features
+
+- Path traversal prevention through canonical path resolution
+- Strict validation of allowed directories
+- Shell command sanitization and whitelisting
+- Execution environment restriction
+
 ## CLI Usage
 
-After installation, run the server:
+After installation, run the server with allowed directories:
 
 ```bash
-node dist/index.js <allow-folder>
+node dist/index.js <allowed-directory-1> [allowed-directory-2...]
 ```
 
-## Dependencies
+The server will only allow operations within the specified directories.
 
-- `@modelcontextprotocol/sdk`: Core MCP functionality
-- `zod-to-json-schema`: Schema conversion tools
+## Available Tools
+
+### Filesystem Operations
+- List directories
+- Read and write files
+- Navigate file system
+
+### Shell Commands
+- Text processing (cat, grep, sed, etc.)
+- File management (ls, find, mkdir, etc.)
+- Development tools (git, npm, node)
 
 ## Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
+2. Create a feature branch (`git checkout -b feature/YourFeature`)
+3. Commit your changes (`git commit -m 'Add some feature'`)
+4. Push to the branch (`git push origin feature/YourFeature`)
 5. Open a Pull Request
 
 ## License
