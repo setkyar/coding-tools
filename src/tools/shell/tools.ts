@@ -2,14 +2,17 @@ import { AppConfig } from '../../config/AppConfig.js';
 import { ToolResponse } from '../types.js';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import * as path from 'path';
 
 const execAsync = promisify(exec);
 
 export class ShellTools {
   private config: AppConfig;
+  private currentWorkingDir: string;
 
   constructor(config: AppConfig) {
     this.config = config;
+    this.currentWorkingDir = this.config.allowedDirectories[0]; // Initialize to the first allowed directory
   }
 
   async shell(params: {
@@ -18,29 +21,32 @@ export class ShellTools {
     timeout?: number;
     env?: Record<string, string>;
   }): Promise<ToolResponse> {
-    const { command, workingDir = process.cwd(), timeout = 30000, env = {} } = params;
+    const { command, workingDir = this.currentWorkingDir, timeout = 30000, env = {} } = params;
 
+    // Validate command input
     if (!command || typeof command !== 'string') {
       throw new Error('Invalid command');
     }
 
+    // Define patterns for harmful commands
     const disallowedPatterns = [
-      /rm\s+(-r[f]?|--recursive)/i,
-      /mkfifo/i,
-      />(\/dev\/tcp|\/dev\/udp)/i,
-      /curl\s+.*\|\s*(bash|sh|zsh)/i,
-      /wget\s+.*\|\s*(bash|sh|zsh)/i,
-      /;\s*(bash|sh|zsh)/i,
-      /&&\s*(bash|sh|zsh)/i,
-      /\|\s*(bash|sh|zsh)/i,
-      /sudo/i,
-      /kill\s+-9/i,
+      /rm\s+(-r[f]?|--recursive)/i, // Recursive or forced remove
+      /mkfifo/i, // Named pipes
+      />(\/dev\/tcp|\/dev\/udp)/i, // Network redirects
+      /curl\s+.*\|\s*(bash|sh|zsh)/i, // Piping curl to shell
+      /wget\s+.*\|\s*(bash|sh|zsh)/i, // Piping wget to shell
+      /;\s*(bash|sh|zsh)/i, // Sequential shell execution
+      /&&\s*(bash|sh|zsh)/i, // Conditional shell execution
+      /\|\s*(bash|sh|zsh)/i, // Piping to shell
+      /sudo/i, // Superuser commands
+      /kill\s+-9/i, // Force kill
     ];
 
     if (disallowedPatterns.some(pattern => pattern.test(command))) {
       return { content: [{ type: 'text', text: 'Harmful command detected' }], isError: true };
     }
 
+    // Define allowed commands
     const allowedCommands = [
       'cat',
       'less',
@@ -72,10 +78,13 @@ export class ShellTools {
       'git',
       'tree',
       'echo',
+      'cd', // Added 'cd' for directory navigation
     ];
 
     const commandParts = command.trim().split(/[\s|><&;]+/);
     const mainCommand = commandParts[0];
+
+    // Check if the main command is allowed
     if (!allowedCommands.includes(mainCommand)) {
       return {
         content: [{ type: 'text', text: `Command '${mainCommand}' not allowed` }],
@@ -83,18 +92,42 @@ export class ShellTools {
       };
     }
 
-    const dangerousSubcommands = ['bash', 'sh', 'zsh', 'rm', 'sudo'];
+    // Check for dangerous subcommands
+    const dangerousSubcommands = ['bash', 'sh', 'zsh', 'sudo'];
     if (commandParts.some(part => dangerousSubcommands.includes(part))) {
       return { content: [{ type: 'text', text: 'Disallowed subcommand detected' }], isError: true };
     }
 
-    if (!this.config.isPathAllowed(workingDir)) {
+    // Validate the working directory
+    if (!(await this.config.isPathAllowed(workingDir))) {
       return {
         content: [{ type: 'text', text: `Restricted directory: ${workingDir}` }],
         isError: true,
       };
     }
 
+    // Special handling for 'cd' command
+    if (mainCommand === 'cd') {
+      const targetDir = commandParts[1] || this.config.allowedDirectories[0]; // Default to first allowed directory
+      const resolvedDir = path.resolve(workingDir, targetDir);
+
+      if (!(await this.config.isPathAllowed(resolvedDir))) {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `Cannot change to directory: ${resolvedDir} is outside allowed directories`,
+            },
+          ],
+          isError: true,
+        };
+      }
+
+      this.currentWorkingDir = resolvedDir;
+      return { content: [{ type: 'text', text: `Changed directory to ${resolvedDir}` }] };
+    }
+
+    // Execute the command
     try {
       const shell = process.platform === 'win32' ? 'cmd.exe' : '/bin/bash';
       const processEnv = { ...process.env, ...env, PATH: process.env.PATH };
@@ -102,7 +135,7 @@ export class ShellTools {
         cwd: workingDir,
         env: processEnv,
         timeout,
-        maxBuffer: 1024 * 1024,
+        maxBuffer: 1024 * 1024, // 1MB buffer limit
         shell,
       });
 
