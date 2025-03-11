@@ -23,10 +23,10 @@ export class ShellTools {
     try {
       // Expand home directory if necessary
       const expandedDir = PathUtils.expandHome(targetDir);
-      
+
       // Resolve the target directory relative to current working directory
       let resolvedDir = path.resolve(this.currentWorkingDir, expandedDir);
-      
+
       // Sanitize the path
       resolvedDir = PathUtils.sanitize(resolvedDir);
 
@@ -90,7 +90,7 @@ export class ShellTools {
     if (!command || typeof command !== 'string') {
       throw new Error('Invalid command');
     }
-    
+
     // Sanitize and validate the working directory
     try {
       workingDir = PathUtils.sanitize(workingDir);
@@ -103,10 +103,12 @@ export class ShellTools {
       }
     } catch (error) {
       return {
-        content: [{ 
-          type: 'text', 
-          text: `Error validating working directory: ${error instanceof Error ? error.message : String(error)}` 
-        }],
+        content: [
+          {
+            type: 'text',
+            text: `Error validating working directory: ${error instanceof Error ? error.message : String(error)}`,
+          },
+        ],
         isError: true,
       };
     }
@@ -201,7 +203,6 @@ export class ShellTools {
       'ping', // Send ICMP ECHO_REQUEST to network hosts
       'netstat', // Network statistics
       'nslookup', // Query Internet name servers interactively
-      'telnet', // User interface to the TELNET protocol
       'ifconfig', // Configure network interface parameters
       'wget', // Non-interactive network downloader
     ];
@@ -219,11 +220,24 @@ export class ShellTools {
     }
 
     // Additional checks for specific commands that might access files
-    const fileAccessCommands = ['cat', 'less', 'more', 'head', 'tail', 'grep', 'cp', 'mv', 'chmod'];
+    const fileAccessCommands = [
+      'cat',
+      'less',
+      'more',
+      'head',
+      'tail',
+      'grep',
+      'cp',
+      'mv',
+      'chmod',
+      'ls',
+      'node',
+      'python',
+    ];
     if (fileAccessCommands.includes(mainCommand)) {
       // Extract file paths from command arguments
       const fileArgs = commandParts.slice(1).filter(arg => !arg.startsWith('-'));
-      
+
       // Check each potential file path
       for (const fileArg of fileArgs) {
         if (fileArg.startsWith('/') || fileArg.startsWith('~')) {
@@ -238,10 +252,12 @@ export class ShellTools {
             }
           } catch (error) {
             return {
-              content: [{ 
-                type: 'text', 
-                text: `Error validating path: ${error instanceof Error ? error.message : String(error)}` 
-              }],
+              content: [
+                {
+                  type: 'text',
+                  text: `Error validating path: ${error instanceof Error ? error.message : String(error)}`,
+                },
+              ],
               isError: true,
             };
           }
@@ -255,9 +271,9 @@ export class ShellTools {
       // Extra scrutiny for commands with shell operators
       const dangerousSubcommands = ['bash', 'sh', 'zsh', 'sudo', 'su', 'eval', 'source', '.'];
       if (dangerousSubcommands.some(cmd => command.includes(cmd))) {
-        return { 
-          content: [{ type: 'text', text: 'Disallowed shell command construction detected' }], 
-          isError: true 
+        return {
+          content: [{ type: 'text', text: 'Disallowed shell command construction detected' }],
+          isError: true,
         };
       }
     }
@@ -288,32 +304,31 @@ export class ShellTools {
       };
     }
   }
-  
+
   /**
    * Execute mkdir command
    */
-  async mkdir(params: {
-    path: string;
-    options?: string;
-  }): Promise<ToolResponse> {
+  async mkdir(params: { path: string; options?: string }): Promise<ToolResponse> {
     const { path: dirPath, options = '' } = params;
 
     try {
       // Sanitize the path
       const sanitizedPath = PathUtils.sanitize(dirPath);
-      
+
       // Check if the path is allowed
       const isPathAllowed = await this.config.isPathAllowed(sanitizedPath);
       if (!isPathAllowed) {
         return {
-          content: [{ type: 'text', text: `Access denied: ${dirPath} is outside allowed directories` }],
+          content: [
+            { type: 'text', text: `Access denied: ${dirPath} is outside allowed directories` },
+          ],
           isError: true,
         };
       }
-      
+
       // Execute the mkdir command
       const recursive = options.includes('-p') || options.includes('--parents');
-      
+
       // Use shell command for execution
       return this.shell({
         command: `mkdir ${options} "${sanitizedPath}"`,
@@ -321,29 +336,31 @@ export class ShellTools {
       });
     } catch (error) {
       return {
-        content: [{ 
-          type: 'text', 
-          text: `Error creating directory: ${error instanceof Error ? error.message : String(error)}` 
-        }],
+        content: [
+          {
+            type: 'text',
+            text: `Error creating directory: ${error instanceof Error ? error.message : String(error)}`,
+          },
+        ],
         isError: true,
       };
     }
   }
-  
+
   /**
    * Safely handle other file operations by delegating to shell
    * These methods ensure proper path validation for all file operations
    */
-  
+
   async cat(params: {
     files: string[];
     options?: string;
     workingDir?: string;
     env?: Record<string, string>;
-    timeout?: number
+    timeout?: number;
   }): Promise<ToolResponse> {
     const { files, options = '', workingDir = this.currentWorkingDir } = params;
-    
+
     try {
       // Validate each file path
       for (const file of files) {
@@ -351,16 +368,18 @@ export class ShellTools {
         const isPathAllowed = await this.config.isPathAllowed(sanitizedPath);
         if (!isPathAllowed) {
           return {
-            content: [{ type: 'text', text: `Access denied: ${file} is outside allowed directories` }],
+            content: [
+              { type: 'text', text: `Access denied: ${file} is outside allowed directories` },
+            ],
             isError: true,
           };
         }
       }
-      
+
       // Format the command safely
       const fileList = files.map(file => `"${file}"`).join(' ');
       const command = `cat ${options} ${fileList}`;
-      
+
       // Execute the command
       return this.shell({
         command,
@@ -370,15 +389,17 @@ export class ShellTools {
       });
     } catch (error) {
       return {
-        content: [{ 
-          type: 'text', 
-          text: `Error in cat command: ${error instanceof Error ? error.message : String(error)}` 
-        }],
+        content: [
+          {
+            type: 'text',
+            text: `Error in cat command: ${error instanceof Error ? error.message : String(error)}`,
+          },
+        ],
         isError: true,
       };
     }
   }
-  
+
   // Additional methods for other shell commands would follow the same pattern
   // Each would validate paths before executing the operation
 }
