@@ -40,8 +40,10 @@ export class FilesystemTools {
 
     // Sanitize and validate the file path
     const sanitizedPath = PathUtils.sanitize(filePath);
-
-    if (!this.config.isPathAllowed(sanitizedPath)) {
+    
+    // Since isPathAllowed is async, we need to await it
+    const isPathAllowed = await this.config.isPathAllowed(sanitizedPath);
+    if (!isPathAllowed) {
       throw new Error(`Access denied: ${filePath} is outside allowed directories`);
     }
 
@@ -49,6 +51,11 @@ export class FilesystemTools {
       // Create parent directories if requested and they don't exist
       if (createDirectories) {
         const dirPath = path.dirname(sanitizedPath);
+        // Check if parent directory is allowed too
+        const isDirAllowed = await this.config.isPathAllowed(dirPath);
+        if (!isDirAllowed) {
+          throw new Error(`Access denied: Parent directory ${dirPath} is outside allowed directories`);
+        }
         await fs.mkdir(dirPath, { recursive: true });
       }
 
@@ -78,10 +85,10 @@ export class FilesystemTools {
     // Sanitize and validate the file path
     const sanitizedPath = PathUtils.sanitize(filePath);
 
-    if (!this.config.isPathAllowed(sanitizedPath)) {
-      // add error logs to debug
+    // Since isPathAllowed is async, we need to await it
+    const isPathAllowed = await this.config.isPathAllowed(sanitizedPath);
+    if (!isPathAllowed) {
       console.error(`Access denied: ${filePath} is outside allowed directories`);
-
       throw new Error(`Access denied: ${filePath} is outside allowed directories`);
     }
 
@@ -121,8 +128,12 @@ export class FilesystemTools {
 
     const sanitizedPaths = filePaths.map(filePath => PathUtils.sanitize(filePath));
 
-    // Filter out paths that are not allowed
-    const allowedPaths = sanitizedPaths.filter(path => this.config.isPathAllowed(path));
+    // Filter out paths that are not allowed - using await with Promise.all for async filtering
+    const pathAllowedResults = await Promise.all(
+      sanitizedPaths.map(path => this.config.isPathAllowed(path))
+    );
+    
+    const allowedPaths = sanitizedPaths.filter((_, index) => pathAllowedResults[index]);
 
     if (allowedPaths.length === 0) {
       throw new Error('No allowed file paths provided');
@@ -171,7 +182,9 @@ export class FilesystemTools {
     // Sanitize and validate the directory path
     const sanitizedPath = PathUtils.sanitize(directoryPath);
 
-    if (!this.config.isPathAllowed(sanitizedPath)) {
+    // Since isPathAllowed is async, we need to await it
+    const isPathAllowed = await this.config.isPathAllowed(sanitizedPath);
+    if (!isPathAllowed) {
       throw new Error(`Access denied: ${directoryPath} is outside allowed directories`);
     }
 
