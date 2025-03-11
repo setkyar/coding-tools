@@ -141,6 +141,24 @@ export const registerShellTools = (config: AppConfig): ToolDefinition[] => {
         return await tools.shell(params);
       },
     },
+    {
+      name: 'xargs',
+      description:
+        'Builds and executes command lines from standard input. Useful for applying commands to multiple items.',
+      schema: ShellSchemas.ShellCommandSchema,
+      handler: async params => {
+        return await tools.shell(params);
+      },
+    },
+    {
+      name: 'tee',
+      description:
+        'Reads from standard input and writes to files and standard output. Great for capturing command output while still viewing it.',
+      schema: ShellSchemas.ShellCommandSchema,
+      handler: async params => {
+        return await tools.shell(params);
+      },
+    },
 
     /**
      * File Management Commands
@@ -233,6 +251,32 @@ export const registerShellTools = (config: AppConfig): ToolDefinition[] => {
         return await tools.changeDirectory(path);
       },
     },
+    {
+      name: 'tar',
+      description:
+        'Tape archiver for file compression and bundling. Used for packaging multiple files together.',
+      schema: ShellSchemas.ShellCommandSchema,
+      handler: async params => {
+        return await tools.shell(params);
+      },
+    },
+    {
+      name: 'gzip',
+      description: 'GNU zip compression utility. Used for compressing files to save disk space.',
+      schema: ShellSchemas.ShellCommandSchema,
+      handler: async params => {
+        return await tools.shell(params);
+      },
+    },
+    {
+      name: 'unzip',
+      description:
+        'List, test and extract compressed files in a ZIP archive. Essential for working with ZIP files.',
+      schema: ShellSchemas.ShellCommandSchema,
+      handler: async params => {
+        return await tools.shell(params);
+      },
+    },
 
     /**
      * System Information Commands
@@ -268,6 +312,41 @@ export const registerShellTools = (config: AppConfig): ToolDefinition[] => {
       name: 'env',
       description:
         'Displays, sets, or removes environment variables. Important for understanding the execution environment.',
+      schema: ShellSchemas.ShellCommandSchema,
+      handler: async params => {
+        return await tools.shell(params);
+      },
+    },
+    {
+      name: 'top',
+      description:
+        'Displays Linux processes. Provides a dynamic real-time view of the running system.',
+      schema: ShellSchemas.ShellCommandSchema,
+      handler: async params => {
+        return await tools.shell(params);
+      },
+    },
+    {
+      name: 'htop',
+      description:
+        'Interactive process viewer. An enhanced version of top with more features and user-friendly interface.',
+      schema: ShellSchemas.ShellCommandSchema,
+      handler: async params => {
+        return await tools.shell(params);
+      },
+    },
+    {
+      name: 'free',
+      description:
+        'Displays amount of free and used memory. Quick way to check system memory usage.',
+      schema: ShellSchemas.ShellCommandSchema,
+      handler: async params => {
+        return await tools.shell(params);
+      },
+    },
+    {
+      name: 'uptime',
+      description: 'Shows how long the system has been running. Also displays load averages.',
       schema: ShellSchemas.ShellCommandSchema,
       handler: async params => {
         return await tools.shell(params);
@@ -326,6 +405,116 @@ export const registerShellTools = (config: AppConfig): ToolDefinition[] => {
         return await tools.shell(params);
       },
     },
+    {
+      name: 'go',
+      description:
+        'Go programming language compiler and tool. Used for running and building Go programs.',
+      schema: ShellSchemas.ShellCommandSchema,
+      handler: async params => {
+        return await tools.shell(params);
+      },
+    },
+    {
+      name: 'conda',
+      description:
+        'Conda package manager for Python. Manages packages and environments for Python and other languages.',
+      schema: ShellSchemas.ShellCommandSchema,
+      handler: async params => {
+        return await tools.shell(params);
+      },
+    },
+    {
+      name: 'docker',
+      description:
+        'Platform for developing, shipping, and running applications. Provides container-based virtualization.',
+      schema: ShellSchemas.ShellCommandSchema,
+      handler: async params => {
+        return await tools.shell(params);
+      },
+    },
+    {
+      name: 'make',
+      description:
+        'Utility for directed compilation. Automates the build process for complex projects.',
+      schema: ShellSchemas.ShellCommandSchema,
+      handler: async params => {
+        return await tools.shell(params);
+      },
+    },
+    {
+      name: 'python',
+      description: 'Python interpreter. Executes Python code and scripts.',
+      schema: ShellSchemas.ShellCommandSchema,
+      handler: async params => {
+        return await tools.shell(params);
+      },
+    },
+    {
+      name: 'curl',
+      description:
+        'Tool for transferring data from or to a server. Supports many protocols including HTTP, HTTPS, FTP.',
+      schema: ShellSchemas.ShellCommandSchema,
+      handler: async params => {
+        return await tools.shell(params);
+      },
+    },
+
+    /**
+     * Networking Commands
+     */
+    {
+      name: 'ping',
+      description:
+        'Send ICMP ECHO_REQUEST to network hosts. Used to test connectivity between hosts.',
+      schema: ShellSchemas.ShellCommandSchema,
+      handler: async params => {
+        return await tools.shell(params);
+      },
+    },
+    {
+      name: 'netstat',
+      description: 'Network statistics. Displays network connections, routing tables, and more.',
+      schema: ShellSchemas.ShellCommandSchema,
+      handler: async params => {
+        return await tools.shell(params);
+      },
+    },
+    {
+      name: 'nslookup',
+      description:
+        'Query Internet name servers interactively. Used for DNS lookups and troubleshooting.',
+      schema: ShellSchemas.ShellCommandSchema,
+      handler: async params => {
+        return await tools.shell(params);
+      },
+    },
+    {
+      name: 'telnet',
+      description:
+        'User interface to the TELNET protocol. Used for interactive communication with another host.',
+      schema: ShellSchemas.ShellCommandSchema,
+      handler: async params => {
+        return await tools.shell(params);
+      },
+    },
+    {
+      name: 'ifconfig',
+      description:
+        'Configure network interface parameters. Used to view and change network interface configuration.',
+      schema: ShellSchemas.ShellCommandSchema,
+      handler: async params => {
+        return await tools.shell(params);
+      },
+    },
+    {
+      name: 'wget',
+      description:
+        'Non-interactive network downloader. Retrieves files from the web supporting HTTP, HTTPS, FTP.',
+      schema: ShellSchemas.ShellCommandSchema,
+      handler: async params => {
+        return await tools.shell(params);
+      },
+    },
 
     /**
      * Generic shell command as a fallback
@@ -334,10 +523,11 @@ export const registerShellTools = (config: AppConfig): ToolDefinition[] => {
       name: 'shell',
       description: `
 Executes shell commands in a secure, controlled environment with strict safety restrictions. This versatile tool allows you to run a curated set of Unix-like commands and capture their output. Supported commands include:
-- **Text Processing**: 'cat', 'less', 'head', 'tail', 'grep', 'awk', 'sed', 'sort', 'uniq', 'cut', 'tr', 'wc', 'diff'
-- **File Management**: 'ls', 'find', 'mkdir', 'cp', 'mv', 'touch', 'chmod', 'pwd'
-- **System Info**: 'ps', 'date', 'whoami', 'env'
-- **Development**: 'npm', 'node', 'git', 'tree', 'echo'
+- **Text Processing**: 'cat', 'less', 'more', 'head', 'tail', 'grep', 'awk', 'sed', 'sort', 'uniq', 'cut', 'tr', 'wc', 'diff', 'xargs', 'tee', 'jq'
+- **File Management**: 'ls', 'find', 'mkdir', 'cp', 'mv', 'touch', 'chmod', 'pwd', 'cd', 'tar', 'gzip', 'unzip'
+- **System Info**: 'ps', 'date', 'whoami', 'env', 'top', 'htop', 'free', 'uptime'
+- **Development**: 'npm', 'node', 'git', 'tree', 'echo', 'go', 'conda', 'docker', 'make', 'python', 'curl'
+- **Networking**: 'ping', 'netstat', 'nslookup', 'telnet', 'ifconfig', 'wget'
 Dangerous operations (e.g., 'rm', 'sudo', shell injections) are blocked for security.
       `.trim(),
       schema: ShellSchemas.ShellCommandSchema,

@@ -88,38 +88,74 @@ export class ShellTools {
       return { content: [{ type: 'text', text: 'Harmful command detected' }], isError: true };
     }
 
-    // Define allowed commands
     const allowedCommands = [
-      'cat',
-      'less',
-      'head',
-      'tail',
-      'grep',
-      'awk',
-      'sed',
-      'sort',
-      'uniq',
-      'cut',
-      'tr',
-      'wc',
-      'diff',
-      'ls',
-      'find',
-      'mkdir',
-      'cp',
-      'mv',
-      'touch',
-      'chmod',
-      'pwd',
-      'ps',
-      'date',
-      'whoami',
-      'env',
-      'npm',
-      'node',
-      'git',
-      'tree',
-      'echo',
+      // FILE VIEWING AND MANIPULATION
+      'cat', // Concatenates and displays file content
+      'less', // Displays file content with pagination
+      'more', // Simpler version of 'less' for file pagination
+      'head', // Displays the beginning of a file
+      'tail', // Displays the end of a file
+      'jq', // Lightweight JSON processor
+
+      // TEXT PROCESSING AND SEARCHING
+      'grep', // Searches text using patterns
+      'awk', // Powerful text processing language
+      'sed', // Stream editor for filtering and transforming text
+      'sort', // Sorts lines of text files
+      'uniq', // Reports or filters out repeated lines
+      'cut', // Removes sections from each line
+      'tr', // Translates or deletes characters
+      'wc', // Counts lines, words, and characters
+      'diff', // Compares files line by line
+      'xargs', // Builds and executes command lines from standard input
+      'tee', // Reads from standard input and writes to files and standard output
+
+      // FILESYSTEM NAVIGATION AND EXAMINATION
+      'ls', // Lists directory contents
+      'find', // Searches for files in a directory hierarchy
+      'tree', // Displays directory structure in a tree-like format
+      'pwd', // Prints working directory
+      'cd', // Changes directory
+      'tar', // Tape archiver for file compression and bundling
+      'gzip', // GNU zip compression utility
+      'unzip', // List, test and extract compressed files in a ZIP archive
+
+      // FILE CREATION AND MODIFICATION
+      'mkdir', // Creates directories
+      'cp', // Copies files and directories
+      'mv', // Moves or renames files and directories
+      'touch', // Updates file timestamps or creates empty files
+      'chmod', // Changes file permissions
+
+      // SYSTEM INFORMATION
+      'top', // Displays Linux processes
+      'htop', // Interactive process viewer
+      'free', // Displays amount of free and used memory
+      'uptime', // Shows how long the system has been running
+      'ps', // Reports process status
+      'date', // Displays or sets the system date and time
+      'whoami', // Prints the current user name
+      'env', // Displays, sets, or removes environment variables
+      'echo', // Displays text or variable values
+
+      // DEVELOPMENT TOOLS and PROGRAMMING LANGUAGES
+      'git', // Distributed version control system
+      'npm', // Node Package Manager for JavaScript
+      'node', // JavaScript runtime environment
+      'go', // Go programming language compiler and tool
+      'conda', // Conda package manager for Python
+      'docker', // Platform for developing, shipping, and running applications
+      'make', // Utility for directed compilation
+      'python', // Python interpreter
+      'curl', // Tool for transferring data from or to a server
+
+      // NETWORKING
+      'ping', // Send ICMP ECHO_REQUEST to network hosts
+      'netstat', // Network statistics
+      'nslookup', // Query Internet name servers interactively
+      'telnet', // User interface to the TELNET protocol
+      'ifconfig', // Configure network interface parameters
+      'wget', // Non-interactive network downloader
     ];
 
     const commandParts = command.trim().split(/[\s|><&;]+/);

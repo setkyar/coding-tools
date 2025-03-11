@@ -41,32 +41,32 @@ export const ShellSchemas = {
     options: z.string().optional().describe('Command options like -n for line numbers.'),
     ...baseCommandParams,
   }),
-  
+
   LessSchema: z.object({
     file: z.string().describe('File to display.'),
     options: z.string().optional().describe('Command options.'),
     ...baseCommandParams,
   }),
-  
+
   HeadSchema: z.object({
     file: z.string().describe('File to display the beginning of.'),
     lines: z.number().optional().default(10).describe('Number of lines to show.'),
     ...baseCommandParams,
   }),
-  
+
   TailSchema: z.object({
     file: z.string().describe('File to display the end of.'),
     lines: z.number().optional().default(10).describe('Number of lines to show.'),
     ...baseCommandParams,
   }),
-  
+
   GrepSchema: z.object({
     pattern: z.string().describe('Pattern to search for.'),
     files: z.array(z.string()).describe('Files to search in.'),
     options: z.string().optional().describe('Command options like -i for case insensitive.'),
     ...baseCommandParams,
   }),
-  
+
   /**
    * File Management Commands
    */
@@ -75,23 +75,26 @@ export const ShellSchemas = {
     options: z.string().optional().describe('Command options like -la for detailed view.'),
     ...baseCommandParams,
   }),
-  
+
   FindSchema: z.object({
     path: z.string().describe('Starting directory for search.'),
     expression: z.string().describe('Find expression (e.g., -name "*.js").'),
     ...baseCommandParams,
   }),
-  
+
   MkdirSchema: z.object({
     path: z.string().describe('Directory to create.'),
-    options: z.string().optional().describe('Command options like -p to create parent directories.'),
+    options: z
+      .string()
+      .optional()
+      .describe('Command options like -p to create parent directories.'),
     ...baseCommandParams,
   }),
-  
+
   CdSchema: z.object({
     path: z.string().describe('Directory to change to.'),
   }),
-  
+
   /**
    * Development Commands
    */
@@ -100,7 +103,7 @@ export const ShellSchemas = {
     options: z.string().optional().describe('Command options and arguments.'),
     ...baseCommandParams,
   }),
-  
+
   NpmSchema: z.object({
     subcommand: z.string().describe('NPM subcommand (e.g., install, start, test).'),
     options: z.string().optional().describe('Command options and arguments.'),
