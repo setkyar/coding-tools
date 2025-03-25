@@ -1,6 +1,6 @@
 {
   "name": "@setkyar/coding-tools",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "MCP server for coding tools",
   "license": "MIT",
   "type": "module",
