@@ -15,6 +15,35 @@ Coding Tools is a Model Context Protocol (MCP) server designed to provide a robu
   - Coding utilities and tools
   - Security and validation utilities
 
+## Usage with Claude Desktop
+
+Add this to your `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "coding-tools": {
+      "command": "npx",
+      "args": ["-y", "@setkyar/coding-tools", "<directory-that-you-want-to-allow>"]
+    }
+  }
+}
+```
+
+## Available Tools
+
+### Filesystem Operations
+
+- List directories
+- Read and write files
+- Navigate file system
+
+### Shell Commands
+
+- Text processing (cat, grep, sed, etc.)
+- File management (ls, find, mkdir, etc.)
+- Development tools (git, npm, node)
+
 ## Technology Stack
 
 - **Language**: TypeScript
@@ -109,18 +138,6 @@ node dist/index.js <allowed-directory-1> [allowed-directory-2...]
 ```
 
 The server will only allow operations within the specified directories.
-
-## Available Tools
-
-### Filesystem Operations
-- List directories
-- Read and write files
-- Navigate file system
-
-### Shell Commands
-- Text processing (cat, grep, sed, etc.)
-- File management (ls, find, mkdir, etc.)
-- Development tools (git, npm, node)
 
 ## Contributing
 
