@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { MCPServer } from './server/MCPServer.js';
 
 async function main() {
